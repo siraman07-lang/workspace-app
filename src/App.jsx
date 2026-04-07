@@ -61,12 +61,18 @@ function App() {
     return () => subscription.unsubscribe();
   }, []);
 
+  // ✨ 1. 구글 이름표 뺏어오기 코드 적용 ✨
   useEffect(() => {
     if (session) {
       const fetchData = async () => {
+        // 구글에서 넘겨준 진짜 이름표를 몰래 가져옵니다!
+        const googleName = session.user.user_metadata?.full_name || session.user.user_metadata?.name || '신인';
+
         const { data } = await supabase.from('profiles').select('nickname, workspace_data').eq('id', session.user.id).single();
+        
         if (data) {
-          setNickname(data.nickname || '작가');
+          // 기존에 방이 있으면 그 방에 있던 이름(또는 구글 이름)을 씁니다.
+          setNickname(data.nickname || googleName);
           if (data.workspace_data) {
             setThemeColor(data.workspace_data.themeColor || '#D17A7A');
             setThemeTextColor(data.workspace_data.themeTextColor || '#ffffff');
@@ -80,6 +86,10 @@ function App() {
           } else {
              setAllWorks([{ id: Date.now(), date: getDateString(new Date()), tagId: 't1', title: '첫 원고를 시작해 보세요!', memo: '', deadline: '', target: 3000, current: 0, done: false }]);
           }
+        } else {
+          // 처음 온 사람(데이터가 없는 사람)이면 구글 이름을 달아줍니다!
+          setNickname(googleName);
+          setAllWorks([{ id: Date.now(), date: getDateString(new Date()), tagId: 't1', title: '첫 원고를 시작해 보세요!', memo: '', deadline: '', target: 3000, current: 0, done: false }]);
         }
         setDataLoaded(true); 
       };
@@ -89,16 +99,24 @@ function App() {
     }
   }, [session]);
 
+  // ✨ 2. 무조건 방 만들어서 저장하기 (upsert) 코드 적용 ✨
   useEffect(() => {
     if (session && dataLoaded) {
       const saveDataTimer = setTimeout(async () => {
-        await supabase.from('profiles').update({ 
+        const { error } = await supabase.from('profiles').upsert({ 
+          id: session.user.id,
+          nickname: nickname,
           workspace_data: { themeColor, themeTextColor, dailyGoal, tags, works: allWorks } 
-        }).eq('id', session.user.id);
+        });
+
+        // 만약 수파베이스가 저장을 거부하면 브라우저 개발자 도구에 에러를 남깁니다.
+        if (error) {
+          console.error("저장 에러 (RLS 설정 확인 필요):", error);
+        }
       }, 1500);
       return () => clearTimeout(saveDataTimer); 
     }
-  }, [themeColor, themeTextColor, dailyGoal, tags, allWorks, session, dataLoaded]);
+  }, [themeColor, themeTextColor, dailyGoal, tags, allWorks, session, dataLoaded, nickname]);
 
   // --- 타이머 ---
   const [timerMode, setTimerMode] = useState('timer'); 
@@ -221,7 +239,6 @@ function App() {
           
           <div className="table-container">
             <table className="work-table">
-              {/* ✨ 달성 칸을 8%로 늘려 숨통을 틔워줬습니다! ✨ */}
               <colgroup>
                 <col width="11%" /><col width="24%" /><col width="24%" /><col width="11%" /><col width="9%" /><col width="9%" /><col width="8%" /><col width="4%" />
               </colgroup>
@@ -265,8 +282,7 @@ function App() {
                             value={work.deadline || ''} 
                             onClick={(e) => {
                               if (e.target.showPicker) {
-                                // ✨ 배포 에러를 발생시키던 주범(err)을 안전하게 처리했습니다! ✨
-                                try { e.target.showPicker(); } catch(error) { console.log(error); }
+                                try { e.target.showPicker(); } catch(err) { console.log(err); }
                               }
                             }}
                             onChange={(e) => updateWork(work.id, 'deadline', e.target.value)} 
@@ -349,4 +365,3 @@ function App() {
 }
 
 export default App;
-// Vercel아 제발 일해라!
