@@ -221,8 +221,9 @@ function App() {
           
           <div className="table-container">
             <table className="work-table">
+              {/* ✨ 달성 칸을 8%로 늘려 숨통을 틔워줬습니다! ✨ */}
               <colgroup>
-                <col width="11%" /><col width="24%" /><col width="25%" /><col width="10%" /><col width="10%" /><col width="10%" /><col width="6%" /><col width="4%" />
+                <col width="11%" /><col width="24%" /><col width="24%" /><col width="11%" /><col width="9%" /><col width="9%" /><col width="8%" /><col width="4%" />
               </colgroup>
               <thead>
                 <tr>
@@ -264,7 +265,8 @@ function App() {
                             value={work.deadline || ''} 
                             onClick={(e) => {
                               if (e.target.showPicker) {
-                                try { e.target.showPicker(); } catch(err) {}
+                                // ✨ 배포 에러를 발생시키던 주범(err)을 안전하게 처리했습니다! ✨
+                                try { e.target.showPicker(); } catch(error) { console.log(error); }
                               }
                             }}
                             onChange={(e) => updateWork(work.id, 'deadline', e.target.value)} 

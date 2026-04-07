@@ -57,6 +57,7 @@ input[type="number"] { -moz-appearance: textfield; }
 .card-header h2 { margin: 0; font-size: 16px; color: var(--text-main); }
 
 .work-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+/* ✨ 헤더 절대 줄바꿈 금지(white-space: nowrap) 재확인 ✨ */
 .work-table th { background: var(--point-color); color: var(--point-text); padding: 12px 8px; font-size: 13px; text-align: center; vertical-align: middle; transition: 0.2s; white-space: nowrap; }
 .work-table th:first-child { border-radius: 8px 0 0 8px; }
 .work-table th:last-child { border-radius: 0 8px 8px 0; }
@@ -66,7 +67,6 @@ input[type="number"] { -moz-appearance: textfield; }
 .text-area-input { resize: none; overflow-y: hidden; line-height: 1.5; min-height: 38px; vertical-align: middle; display: block; margin: 0 auto; }
 .invisible-input:focus { background: #f9f9f9; }
 
-/* ✨ 클릭 영역을 100% 꽉 채우는 마법의 CSS ✨ */
 .custom-date-wrapper { position: relative; display: inline-flex; align-items: center; justify-content: center; padding: 6px 8px; border-radius: 8px; font-weight: 700; font-size: 13px; color: var(--text-main); transition: 0.2s; width: 100%; box-sizing: border-box; background: transparent; }
 .custom-date-wrapper:hover { background: #f0f0f0; }
 .date-text { pointer-events: none; z-index: 1; } 
