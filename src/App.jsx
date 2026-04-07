@@ -171,7 +171,6 @@ function App() {
   if (!dataLoaded) return <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#999' }}>작업실을 불러오는 중...</div>;
 
   return (
-    // 다크 모드 관련 클래스와 로직을 삭제했습니다.
     <div className="app-root" style={{ '--point-color': themeColor, '--point-text': themeTextColor }} onClick={() => { setOpenDropdownId(null); setOpenActionId(null); setIsTagModalOpen(false); }}>
       
       <header className="main-header">
@@ -193,7 +192,6 @@ function App() {
             <label className="picker-label" title="버튼 및 표 배경색"><input type="color" className="theme-color-button" value={themeColor} onChange={(e) => setThemeColor(e.target.value)} /></label>
             <label className="picker-label" title="버튼 및 표 글자색"><input type="color" className="theme-color-button" value={themeTextColor} onChange={(e) => setThemeTextColor(e.target.value)} /></label>
           </div>
-          {/* 달 버튼(다크모드 토글) 삭제됨 */}
           <button className="settings-btn" onClick={(e) => { e.stopPropagation(); setIsTagModalOpen(true); }}>⚙️ 태그 설정</button>
         </div>
       </header>
